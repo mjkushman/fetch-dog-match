@@ -1,25 +1,23 @@
-import { FetchDogsOptions } from "@/types/FetchDogsOptions";
-
+import { Dog } from "@/types/Dog";
+/** Takes an array of dog IDs, returns an array of Dog objects */
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-/** GET request that optionally accepts FetchDogsOptions */
-const fetchDogs = async (options: FetchDogsOptions = {}) => {
-  const url = new URL(`${BASE_URL}/dogs/search`);
+const fetchDogs = async (dogIds: string[]): Promise<Dog[]> => {
+  const url = new URL("dogs", BASE_URL);
 
-  // Add query parameters to URL
-  Object.keys(options).forEach((key) => {
-    const value = options[key as keyof FetchDogsOptions];
-    if (value !== undefined) {
-      url.searchParams.append(key, String(value));
-    }
-  });
-
-  await fetch(url, {
-    method: "GET",
+  const result = await fetch(url, {
+    method: "POST",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
+    body: JSON.stringify(dogIds),
   });
+
+  if (!result.ok) {
+    throw new Error("Failed to fetch dogs");
+  }
+  return await result.json();
 };
+
 export default fetchDogs;

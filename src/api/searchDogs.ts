@@ -3,27 +3,38 @@ import { SearchDogsResponse } from "@/types/SearchDogsResponse";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+// const defaultOptions = { size: 24, ageMin: 9 };
+
 /** GET request that optionally accepts FetchDogsOptions */
-const searchDogs = (
-  options: SearchDogsOptions = {}
-): Promise<SearchDogsResponse[]> => {
-  const url = new URL(`${BASE_URL}/dogs/search`);
+const searchDogs = async (
+  path: string | undefined,
+  options: SearchDogsOptions
+): Promise<SearchDogsResponse> => {
+  const url = new URL(path || `dogs/search`, BASE_URL);
 
-  // Add query parameters to URL
-  Object.keys(options).forEach((key) => {
-    const value = options[key as keyof SearchDogsOptions];
-    if (value !== undefined) {
-      url.searchParams.append(key, String(value));
-    }
-  });
+  if (!path) {
+    // Add query parameters to URL if a path wasn't supplied
+    Object.keys(options).forEach((key) => {
+      const value = options[key as keyof SearchDogsOptions];
+      if (value !== undefined) {
+        url.searchParams.set(key, String(value));
+      }
+    });
+    url.searchParams.set("size", "24"); // force size to 24
+  }
 
-  return fetch(url, {
+  console.log("debugging search url:", url.toString());
+  const response = await fetch(url, {
     method: "GET",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
-  }).then((res) => res.json());
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return await response.json();
 };
 
 export default searchDogs;
