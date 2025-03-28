@@ -11,6 +11,7 @@ import authenticate from "@/api/authenticate";
 import Loading from "./components/Loading";
 import DogCard from "./components/DogCard";
 import { SearchDogsOptions } from "./types/SearchDogsOptions";
+import PageControls from "./components/PageControls";
 
 function App() {
   const [dogs, setDogs] = useState<Dog[]>(); // result from get dogs, for display
@@ -19,6 +20,8 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [nextPageQuery, setNextPageQuery] = useState<string | null>(null);
   const [prevPageQuery, setPrevPageQuery] = useState<string | null>(null);
+  const [sortMethod, setSortMethod] = useState();
+  const [sortDir, setSortDir] = useState<"asc" | "desc">();
 
   const doLogin = async (loginFormData: LoginFormData) => {
     setIsLoading(true);
@@ -64,8 +67,6 @@ function App() {
     }
   };
 
-  
-
   useEffect(() => {
     checkAuth().then(() => loadDogs());
     // loadDogs();
@@ -89,20 +90,12 @@ function App() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {dogs && dogs.map((dog) => <DogCard key={dog.id} dog={dog} />)}
       </div>
-      <div className="flex justify-between mt-4">
-        <button
-          disabled={!prevPageQuery}
-          onClick={() => prevPageQuery && loadDogs(prevPageQuery)}
-        >
-          Previous
-        </button>
-        <button
-          disabled={!nextPageQuery}
-          onClick={() => nextPageQuery && loadDogs(nextPageQuery)}
-        >
-          Next
-        </button>
-      </div>
+      {/* Pagination controls */}
+      <PageControls
+        nextPageQuery={nextPageQuery}
+        prevPageQuery={prevPageQuery}
+        loadDogs={loadDogs}
+      />
     </>
   ) : (
     <Login doLogin={doLogin} />
