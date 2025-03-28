@@ -20,7 +20,7 @@ const searchDogs = async (
         url.searchParams.set(key, String(value));
       }
     });
-    url.searchParams.set("size", "24"); // force size to 24
+    url.searchParams.set("size", "36"); // force size to 24
   }
 
   console.log("debugging search url:", url.toString());
