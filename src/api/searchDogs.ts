@@ -16,11 +16,15 @@ const searchDogs = async (
     // Add query parameters to URL if a path wasn't supplied
     Object.keys(options).forEach((key) => {
       const value = options[key as keyof SearchDogsOptions];
-      if (value !== undefined) {
+      if (value !== undefined && key !== "sortOrder" && key !== "sortField") {
         url.searchParams.set(key, String(value));
       }
     });
-    url.searchParams.set("size", "36"); // force size to 24
+    url.searchParams.set("size", "36"); // force size
+    // handle sorting specifically
+    if(options.sortField && options.sortOrder) {
+      url.searchParams.set("sort", `${options.sortField}:${options.sortOrder}`);
+    }
   }
 
   console.log("debugging search url:", url.toString());

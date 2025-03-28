@@ -9,19 +9,27 @@ import authCheck from "@/api/authCheck";
 import { LoginFormData } from "@/types/LoginFormData";
 import authenticate from "@/api/authenticate";
 import Loading from "./components/Loading";
-import DogCard from "./components/DogCard";
+
 import { SearchDogsOptions } from "./types/SearchDogsOptions";
 import PageControls from "./components/PageControls";
+import { SortField, SortOrder } from "./types/Sort";
+import DogList from "./components/DogList";
+import SortControls from "./components/SortControls";
 
 function App() {
-  const [dogs, setDogs] = useState<Dog[]>(); // result from get dogs, for display
-  const [options, setOptions] = useState<SearchDogsOptions>({}); // dog search options, updated by filters
+  const [dogs, setDogs] = useState<Dog[] | null>(null); // result from get dogs, for display
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [nextPageQuery, setNextPageQuery] = useState<string | null>(null);
   const [prevPageQuery, setPrevPageQuery] = useState<string | null>(null);
-  const [sortMethod, setSortMethod] = useState();
-  const [sortDir, setSortDir] = useState<"asc" | "desc">();
+
+  const [sortField, setSortField] = useState<SortField>("breed");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+
+  const [options, setOptions] = useState<SearchDogsOptions>({
+    sortField: 'breed',
+    sortOrder: 'asc' // defaults to breed, asc
+  }); // dog search options, updated by filters
 
   const doLogin = async (loginFormData: LoginFormData) => {
     setIsLoading(true);
@@ -58,10 +66,11 @@ function App() {
 
       const fetchResult = await fetchDogs([...resultIds]);
       console.log("fetchResult", fetchResult);
-
+      if (!fetchResult) setDogs(null);
       setDogs(fetchResult);
     } catch (error) {
       console.log(error);
+      setDogs(null);
     } finally {
       setIsLoading(false);
     }
@@ -72,6 +81,15 @@ function App() {
     // loadDogs();
   }, [options]);
 
+  const handleSortOrder = (order: SortOrder) => {
+    setSortOrder(order);
+    setOptions((prev) => ({ ...prev, sortOrder: order }));
+  };
+  const handleSortField = (field: SortField) => {
+    setSortField(field)
+    setOptions((prev) => ({ ...prev, sortField: field }));
+  };
+
   if (isLoading) return <Loading />;
 
   return isAuthenticated ? (
@@ -81,15 +99,17 @@ function App() {
       <div>
         {/* hold controls for age min, age max, breeds, zip code */}
         Search controls
+        <SortControls
+          handleSortOrder={handleSortOrder}
+          handleSortField={handleSortField}
+          sortField={sortField}
+          sortOrder={sortOrder}
+        />
       </div>
-      <div>
-        {/* Holds controls which  */}
-        Sort controls to change how dogs is sorted
-      </div>
+      {/* Holds controls for sorting dogs  */}
+
       {/* Display dogs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {dogs && dogs.map((dog) => <DogCard key={dog.id} dog={dog} />)}
-      </div>
+      <DogList dogs={dogs} />
       {/* Pagination controls */}
       <PageControls
         nextPageQuery={nextPageQuery}
