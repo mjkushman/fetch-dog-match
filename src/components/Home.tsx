@@ -1,80 +1,53 @@
-import fetchDogs from "@/api/fetchDogs";
-import searchDogs from "@/api/searchDogs";
 import { SearchDogsOptions } from "@/types/SearchDogsOptions";
 import { SortField, SortOrder } from "@/types/Sort";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBreedFilter from "./SearchBreedFilter";
 import SortControls from "./SortControls";
 import PageControls from "./PageControls";
 import DogList from "./DogList";
 
-type Props = {};
+import Loading from "./Loading";
+import { useDogs } from "@/hooks/useDogs";
+import { Dog } from "@/types/Dog";
 
-export default function Home({}: Props) {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+export default function Home() {
+  // const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const getInitialDogs = () => {
-    setIsLoading(true);
-    searchDogs("")
-      .then(({ resultIds, next, prev }) => {
-        if (next) setNextPageQuery(next);
-        if (prev) setPrevPageQuery(prev);
-        return fetchDogs(resultIds);
-      })
-      .then((dogs) => dogs)
-      .catch((err) => {
-        console.log("error in loadDogs", err);
-      })
-      .finally(() => setIsLoading(false));
-  };
+  // const getInitialDogs = () => {
+  //   // setIsLoading(true);
+  //   return searchDogs("")
+  //     .then(({ resultIds, next, prev }) => {
+  //       if (next) setNextPageQuery(next);
+  //       if (prev) setPrevPageQuery(prev);
+  //       return fetchDogs(resultIds);
+  //     })
+  //     .then((dogs) => dogs)
+  //     .catch((err) => {
+  //       console.log("error in loadDogs", err);
+  //       return [] as Dog[];
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // };
 
-  const [dogs, setDogs] = useState<Dog[] | null>(() => getInitialDogs()); // result from get dogs, for display
-  const [nextPageQuery, setNextPageQuery] = useState<string | null>(null);
-  const [prevPageQuery, setPrevPageQuery] = useState<string | null>(null);
+  // const [dogs, setDogs] = useState<Promise<Dog[]>>(() =>
+  //   getInitialDogs()
+  // ); // result from get dogs, for display
+
+  const { dogs, getDogs, isLoading, nextPageQuery, prevPageQuery } = useDogs();
 
   const [sortField, setSortField] = useState<SortField>("breed");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
-  const [breedFilter, setBreedFilter] = useState<string>();
 
   const [options, setOptions] = useState<SearchDogsOptions>({
     sortField: "breed",
     sortOrder: "asc", // defaults to breed, asc
   }); // dog search options, updated by filters
 
-  // Getting breeds should also act to check authentication
-  const [breeds, setBreeds] = useState<string[]>([]);
-  // async () => await fetchBreeds()
-
-  // const breeds = async () => await fetchBreeds();
-
   useEffect(() => {
-    console.log("breeds", breeds);
-  }, [breeds]);
-
-  /** loadDogs combines searchDogs and fetchDogs **/
-  const loadDogs = async (query?: string) => {
-    setIsLoading(true);
-    try {
-      const searchResult = await searchDogs(query ?? undefined, options);
-      const { resultIds, next, prev } = searchResult;
-      if (next) setNextPageQuery(next);
-      if (prev) setPrevPageQuery(prev);
-
-      const fetchResult = await fetchDogs([...resultIds]);
-      console.log("fetchResult", fetchResult);
-      if (!fetchResult) setDogs(null);
-      setDogs(fetchResult);
-    } catch (error) {
-      console.log(error);
-      setDogs(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadDogs();
+    getDogs("", options);
   }, [options]);
 
   const handleSortOrder = (order: SortOrder) => {
@@ -86,23 +59,27 @@ export default function Home({}: Props) {
     setOptions((prev) => ({ ...prev, sortField: field }));
   };
   // temp function
-  const handleBreedSelect = (breed: string) => {
-    if (!breed) console.log("selected breed", breed);
+  const handleBreedSelect = (breeds: string[]) => {
+    if (breeds.length > 0) {
+      console.log("selected breeds", breeds);
+      setOptions((prev) => ({ ...prev, breeds: breeds }));
+    }
   };
+
+
+
+  
+
   return (
-    <>
+    <div>
       <h1>Find Your Best Friend</h1>
-      
+
       <div>{/* FILTER CONTROLS for age min, age max, breeds, zip code */}</div>
 
-      <div>
+      <div></div>
+      <div className="flex mx-auto justify-center">
         {/* Breed Filter control */}
-        <SearchBreedFilter
-          // breeds={breeds}
-          handleBreedSelect={handleBreedSelect}
-        />
-      </div>
-      <div>
+        <SearchBreedFilter handleBreedSelect={handleBreedSelect} />
         {/* SORT CONTROLS for sorting dogs  */}
         <SortControls
           handleSortOrder={handleSortOrder}
@@ -112,13 +89,19 @@ export default function Home({}: Props) {
         />
       </div>
       {/* Display dogs */}
-      <DogList dogs={dogs} />
+      <div className="block">
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <DogList dogs={dogs}  />
+        )}
+      </div>
       {/* Pagination controls */}
       <PageControls
         nextPageQuery={nextPageQuery}
         prevPageQuery={prevPageQuery}
-        loadDogs={loadDogs}
+        getDogs={getDogs}
       />
-    </>
+    </div>
   );
 }
