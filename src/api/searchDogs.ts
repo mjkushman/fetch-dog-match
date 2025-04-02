@@ -8,23 +8,26 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 /** GET request that optionally accepts FetchDogsOptions */
 const searchDogs = async (
   path: string | undefined,
-  options: SearchDogsOptions
+  options?: SearchDogsOptions
 ): Promise<SearchDogsResponse> => {
   const url = new URL(path || `dogs/search`, BASE_URL);
 
   if (!path) {
     // Add query parameters to URL if a path wasn't supplied
-    Object.keys(options).forEach((key) => {
-      const value = options[key as keyof SearchDogsOptions];
-      if (value !== undefined && key !== "sortOrder" && key !== "sortField") {
-        url.searchParams.set(key, String(value));
+    if(options){
+      Object.keys(options).forEach((key) => {
+        const value = options[key as keyof SearchDogsOptions];
+        if (value !== undefined && key !== "sortOrder" && key !== "sortField") {
+          url.searchParams.set(key, String(value));
+        }
+      });
+
+      if(options.sortField && options.sortOrder) {
+        url.searchParams.set("sort", `${options.sortField}:${options.sortOrder}`);
       }
-    });
+    }
     url.searchParams.set("size", "36"); // force size
     // handle sorting specifically
-    if(options.sortField && options.sortOrder) {
-      url.searchParams.set("sort", `${options.sortField}:${options.sortOrder}`);
-    }
   }
 
   console.log("debugging search url:", url.toString());
