@@ -13,13 +13,12 @@ import { Dog } from "@/types/Dog";
 import Favorites from "./Favorites";
 import MatchedDog from "@/components/MatchedDog";
 import fetchMatch from "@/api/fetchMatch";
+import Hero from "@/components/Hero";
+import { Button } from "./ui/button";
 
 export default function Home() {
-  const maxFavorites = 5;
+  const maxFavorites = 7;
   const { dogs, getDogs, isLoading, nextPageQuery, prevPageQuery } = useDogs();
-
-  const [sortField, setSortField] = useState<SortField>("breed");
-  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
   const [selectedDogs, setSelectedDogs] = useState<Map<string, Dog>>(new Map()); // an array of "saved" dog Ids
 
@@ -34,18 +33,16 @@ export default function Home() {
   }, [options]);
 
   const handleSortOrder = (order: SortOrder) => {
-    setSortOrder(order);
     setOptions((prev) => ({ ...prev, sortOrder: order }));
   };
   const handleSortField = (field: SortField) => {
-    setSortField(field);
     setOptions((prev) => ({ ...prev, sortField: field }));
   };
   // temp function
-  const handleBreedSelect = (breeds: string[]) => {
-    if (breeds.length > 0) {
-      console.log("selected breeds", breeds);
-      setOptions((prev) => ({ ...prev, breeds: breeds }));
+  const handleBreedSelect = (breed: string) => {
+    if (breed !== "") {
+      console.log("selected breeds", breed);
+      setOptions((prev) => ({ ...prev, breed: breed }));
     }
   };
 
@@ -74,6 +71,7 @@ export default function Home() {
 
   const getMatch = () => {
     if (!selectedDogs.size) return; // do nothing
+    setMatchedDog(null);
     fetchMatch([...selectedDogs.keys()]).then(({ match }) => {
       const dog = selectedDogs.get(match) || null;
       setMatchedDog(dog);
@@ -85,56 +83,63 @@ export default function Home() {
   }, [matchedDog]);
 
   return (
-    <div className="w-full mx-auto flex flex-col items-center">
-      <div className="h-32 mt-32 w-full bg-yellow-100 flex">
-        <h1 className="p-auto m-auto">Find Your Best Friend</h1>
+    <>
+      <div className="fixed top-0 w-full z-10">
+        <Hero>
+          <div className="flex mx-auto h-16 bg-white items-center rounded-l-full  rounded-r-full shadow-2xl border-stone-200 border-1">
+            {/* Breed Filter control */}
+            <SearchBreedFilter handleBreedSelect={handleBreedSelect} />
+            {/* SORT CONTROLS for sorting dogs  */}
+            <SortControls
+              handleSortOrder={handleSortOrder}
+              handleSortField={handleSortField}
+            />
+          </div>
+        </Hero>
       </div>
 
-      <div>{/* FILTER CONTROLS for age min, age max, breeds, zip code */}</div>
-
-      <div className="flex flex-row">
+      <div className="relative main w-full mx-auto flex flex-col items-center mt-32">
         <div>
-          <h3>Select up to 5 dogs to receive a recommentation</h3>
+          {/* FILTER CONTROLS for age min, age max, breeds, zip code */}
+        </div>
 
-          <Favorites
-            favoriteDogs={[...selectedDogs.values()]}
-            removeFromFavorites={removeFromFavorites}
-          />
+        <div className="flex flex-row items-center-auto">
+          {/*  Favotites and Match section */}
+          <div className="sticky top-4 self-start p-4 w-full bg-white shadow-lg rounded-xl border my-2 max-w-xl">
+
+            <Favorites
+              favoriteDogs={[...selectedDogs.values()]}
+              removeFromFavorites={removeFromFavorites}
+            />
+            <Button
+              disabled={selectedDogs.size === 0}
+              onClick={getMatch}
+              className="w-full py-4 rounded-lg bg-primary mt-4"
+            >
+              <p>Get {matchedDog ? "New " : ""} Recommendation</p>
+            </Button>
+          </div>
+          <div className="flex flex-col m-2">
+            <MatchedDog matchedDog={matchedDog} />
+
+          </div>
         </div>
-        <div className="flex flex-col m-2">
-          TODO: Add logic to show or hide this section
-          <button disabled={selectedDogs.size === 0} onClick={getMatch}>
-            Get Recommendation
-          </button>
-          <MatchedDog matchedDog={matchedDog} />
+
+        {/* Display dogs */}
+        <div className="block">
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <DogList dogs={dogs} handleSelectId={handleSelectId} />
+          )}
         </div>
-      </div>
-      <div className="flex mx-auto justify-center h-32 bg-blue-100 items-center rounded-sm mt-8 mb-4 text-xl">
-        {/* Breed Filter control */}
-        <SearchBreedFilter handleBreedSelect={handleBreedSelect} />
-        {/* SORT CONTROLS for sorting dogs  */}
-        <SortControls
-          handleSortOrder={handleSortOrder}
-          handleSortField={handleSortField}
-          sortField={sortField}
-          sortOrder={sortOrder}
+        {/* Pagination controls */}
+        <PageControls
+          nextPageQuery={nextPageQuery}
+          prevPageQuery={prevPageQuery}
+          getDogs={getDogs}
         />
       </div>
-
-      {/* Display dogs */}
-      <div className="block">
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <DogList dogs={dogs} handleSelectId={handleSelectId} />
-        )}
-      </div>
-      {/* Pagination controls */}
-      <PageControls
-        nextPageQuery={nextPageQuery}
-        prevPageQuery={prevPageQuery}
-        getDogs={getDogs}
-      />
-    </div>
+    </>
   );
 }

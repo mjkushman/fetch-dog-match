@@ -10,8 +10,8 @@ import {
 
 export default function DogCard({ dog }: { dog: Dog }) {
   return (
-    <>
-      <Card className="pt-0 m-2 rounded-t-md border-gray-50 gap-2 mx-0">
+
+      <Card className="pt-0 m-2 rounded-t-md border-gray-50 gap-2 mx-0 hover:shadow">
         <img
           src={dog.img}
           alt={dog.name}
@@ -30,6 +30,6 @@ export default function DogCard({ dog }: { dog: Dog }) {
           </div>
         </CardContent>
       </Card>
-    </>
+    
   );
 }
