@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
+import Wordmark from "@/assets/wordmark.svg?react";
 
 export default function Hero({ children }: { children: ReactNode }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -14,13 +15,12 @@ export default function Hero({ children }: { children: ReactNode }) {
   const heroHeight = isScrolled ? "h-16" : "h-32";
 
   return (
-    <div
-      className={`w-full bg-neutral-50 flex items-center transition-all duration-300 ${heroHeight}`}
-    >
-      <div className="w-full flex items-center">
-        <h1 className="text-xl ml-4">Fetch</h1>
-        <div className="flex-grow flex justify-center">{children}</div>
-      </div>
+    <div className={`w-full bg-neutral-50 flex items-center relative transition-all duration-300 ${heroHeight}`}>
+      <Wordmark className="h-8 ml-4" aria-label="Fetch Wordmark">
+        <title>Fetch</title>
+      </Wordmark>
+
+      <div className="absolute left-1/2 -translate-x-1/2">{children}</div>
     </div>
   );
 }
