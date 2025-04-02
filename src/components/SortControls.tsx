@@ -1,9 +1,19 @@
 import { SortField, SortOrder } from "@/types/Sort";
-import { useState } from "react";
+import { ArrowUp, ArrowDown } from "lucide-react";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 type SortControlsProps = {
-  sortField: SortField;
-  sortOrder: SortOrder;
   handleSortField: (field: SortField) => void;
   handleSortOrder: (order: SortOrder) => void;
 };
@@ -11,33 +21,48 @@ type SortControlsProps = {
 export default function SortControls({
   handleSortOrder,
   handleSortField,
-  sortOrder,
-  sortField,
 }: SortControlsProps) {
-  const onFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const field = e.target.value as SortField;
+  const [isAscending, setIsAscending] = useState(true);
 
-    handleSortField(field);
+  const onFieldChange = (value: SortField) => {
+    handleSortField(value);
   };
-  const onSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const order = e.target.value as SortOrder;
+  const toggleSort = () => {
+    setIsAscending((prev) => !prev);
+  };
 
-    handleSortOrder(order);
-  };
+  useEffect(() => {
+    if (isAscending) handleSortOrder("asc");
+    else handleSortOrder("desc");
+  }, [isAscending]);
 
   return (
-    <div>
-      <label htmlFor="sortField">Sort By:</label>
-      <select id="sortField" value={sortField} onChange={onFieldChange}>
-        <option value="breed">Breed</option>
-        <option value="name">Name</option>
-        <option value="age">Age</option>
-      </select>
-      <label htmlFor="sortOrder">Order:</label>
-      <select id="sortOrder" value={sortOrder} onChange={onSortChange}>
-        <option value="asc">Ascending</option>
-        <option value="desc">Descending</option>
-      </select>
+    <div className="flex flex-row h-full">
+      <Select onValueChange={onFieldChange}>
+        <SelectTrigger
+          className="w-[180px] min-h-full rounded-full border-0 hover:bg-gray-200 flex items-center"
+          name="sortField"
+        >
+          <SelectValue placeholder="Sort" />
+        </SelectTrigger>
+        <SelectContent className="bg-white rounded-xl">
+          <SelectGroup>
+            <SelectLabel>Sort by:</SelectLabel>
+            <SelectItem value="breed">Breed</SelectItem>
+            <SelectItem value="name">Name</SelectItem>
+            <SelectItem value="age">Age</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+
+      <Button
+        onClick={toggleSort}
+        variant="outline"
+        className="flex items-center gap-2 h-full rounded-full border-0 hover:bg-gray-200"
+      >
+        {isAscending ? "Asc" : "Desc"}
+        {isAscending ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
+      </Button>
     </div>
   );
 }

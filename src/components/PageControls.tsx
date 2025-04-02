@@ -1,7 +1,7 @@
-
+import { Button } from "./ui/button";
 
 type PageControlsProps = {
-  loadDogs: (query: string) => void;
+  getDogs: (query: string) => void;
   prevPageQuery: string | null;
   nextPageQuery: string | null;
 };
@@ -9,22 +9,22 @@ type PageControlsProps = {
 export default function PageControls({
   prevPageQuery,
   nextPageQuery,
-  loadDogs,
+  getDogs,
 }: PageControlsProps) {
   return (
-    <div className="flex justify-between mt-4">
-      <button
+    <div className="flex justify-center m-4 gap-6">
+      <Button
         disabled={!prevPageQuery}
-        onClick={() => prevPageQuery && loadDogs(prevPageQuery)}
+        onClick={() => prevPageQuery && getDogs(prevPageQuery)}
       >
         Previous
-      </button>
-      <button
+      </Button>
+      <Button
         disabled={!nextPageQuery}
-        onClick={() => nextPageQuery && loadDogs(nextPageQuery)}
+        onClick={() => nextPageQuery && getDogs(nextPageQuery)}
       >
         Next
-      </button>
+      </Button>
     </div>
   );
 }

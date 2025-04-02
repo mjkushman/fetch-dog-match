@@ -26,7 +26,7 @@ export default function Home() {
   const [options, setOptions] = useState<SearchDogsOptions>({
     sortField: "breed",
     sortOrder: "asc", // defaults to breed, asc
-  }); // dog search options, updated by filters
+  }); 
 
   useEffect(() => {
     getDogs("", options);
@@ -38,11 +38,13 @@ export default function Home() {
   const handleSortField = (field: SortField) => {
     setOptions((prev) => ({ ...prev, sortField: field }));
   };
-  // temp function
+ 
+
+  
   const handleBreedSelect = (breed: string) => {
     if (breed !== "") {
-      console.log("selected breeds", breed);
-      setOptions((prev) => ({ ...prev, breed: breed }));
+      console.log("selected breed", breed);
+      setOptions((prev) => ({ ...prev, breeds: [breed] }));
     }
   };
 
@@ -78,9 +80,6 @@ export default function Home() {
     });
   };
 
-  useEffect(() => {
-    console.log("debugging matchedDog:", matchedDog);
-  }, [matchedDog]);
 
   return (
     <>

@@ -5,7 +5,7 @@ type Props = { matchedDog?: Dog };
 export default function MatchedDog({ matchedDog }: Props) {
   return (
     matchedDog && (
-      <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-lg shadow-xl flex flex-col items-center justify-center">
+      <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-lg shadow-xl flex flex-col items-center justify-center animate-fade-in-down w-sm">
         <h2 className="text-2xl font-bold mb-4 animate-pulse">
           We Found a Match!
         </h2>
