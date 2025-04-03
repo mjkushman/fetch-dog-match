@@ -31,9 +31,9 @@ export default function RequireAuth({ children }: { children: ReactNode }) {
       .then((res) => setIsAuthenticated(res))
       .catch(() => setIsAuthenticated(false))
       .finally(() => setIsLoading(false));
-  }, [BASE_URL]);
+  }, []);
 
-  if (isLoading) return <Loading/>;
+  if (isLoading) return <Loading />;
 
   if (!isAuthenticated && !isLoading) return <Login doLogin={doLogin} />;
   return <div>{children}</div>;
