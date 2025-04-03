@@ -2,7 +2,7 @@
 
 import { Match } from "@/types/Match";
 /** Takes an array of dog IDs, returns an array of Dog objects */
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import BASE_URL from "./baseUrl";
 
 const fetchMatch = async (dogIds: string[]): Promise<Match> => {
   const url = new URL("dogs/match", BASE_URL);

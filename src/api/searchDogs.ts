@@ -1,7 +1,7 @@
 import { SearchDogsOptions } from "@/types/SearchDogsOptions";
 import { SearchDogsResponse } from "@/types/SearchDogsResponse";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import BASE_URL from "./baseUrl";
 
 // const defaultOptions = { size: 24, ageMin: 9 };
 

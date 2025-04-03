@@ -1,6 +1,5 @@
 import { LoginFormData } from "@/types/LoginFormData";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import BASE_URL from "./baseUrl";
 
 const authenticate = async ({ name, email }: LoginFormData) => {
   const url = new URL("auth/login", BASE_URL);

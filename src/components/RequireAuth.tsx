@@ -3,9 +3,9 @@ import Login from "@/components/Login";
 import authenticate from "@/api/authenticate";
 import { LoginFormData } from "@/types/LoginFormData";
 import Loading from "@/components/Loading";
+import BASE_URL from "@/api/baseUrl";
 
 export default function RequireAuth({ children }: { children: ReactNode }) {
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 

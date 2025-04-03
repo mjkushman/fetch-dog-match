@@ -1,6 +1,6 @@
 import { Dog } from "@/types/Dog";
 /** Takes an array of dog IDs, returns an array of Dog objects */
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import BASE_URL from "./baseUrl";
 
 const fetchDogs = async (dogIds: string[]): Promise<Dog[]> => {
   const url = new URL("dogs", BASE_URL);

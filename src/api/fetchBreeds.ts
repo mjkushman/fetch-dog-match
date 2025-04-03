@@ -1,5 +1,5 @@
 /** Returns an array of all possible breed names.  */
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import BASE_URL from "./baseUrl";
 
 const fetchBreeds = async (): Promise<string[]> => {
   const url = new URL("dogs/breeds", BASE_URL);
