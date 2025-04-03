@@ -24,37 +24,31 @@ type SearchBreedFilterProps = {
   handleBreedSelect: (breeds: string) => void;
 };
 
-/** Filters dogs by breed. Get list of breeds by API request to populate Select element */
 export default function SearchBreedFilter({
   handleBreedSelect,
 }: SearchBreedFilterProps) {
   const [breedOptions, setBreedOptions] = useState<string[]>([]);
 
-
-  // shadcn combobox state
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
   useEffect(() => {
-    // get list of breeds
     fetchBreeds().then((res) => {
       setBreedOptions(res);
-      // setSelectedBreeds();
     });
   }, []);
-
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         asChild
-        className="bg-white border-0 rounded-full h-16 hover:bg-gray-200 text-center" 
+        className="bg-white border-0 rounded-full h-16 hover:bg-gray-200 "
       >
         <Button
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[280px] justify-between h-full"
+          className="w-[280px] justify-between h-full text-center"
         >
           {value
             ? breedOptions.find((breeds) => breeds === value)
@@ -62,9 +56,12 @@ export default function SearchBreedFilter({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0 bg-white rounded-4xl py-2 border-0 shadow-xl ">
-        <Command>
-          <CommandInput placeholder="Search breeds..." />
+      <PopoverContent className="w-[280px] p-0 bg-white rounded-4xl py-0 border-0 shadow-xl">
+        <Command className="rounded-t-3xl rounded-b-4xl">
+          <CommandInput
+            placeholder="Search breeds..."
+            className="leading-loose"
+          />
           <CommandList>
             <CommandEmpty>No breeds found.</CommandEmpty>
             <CommandGroup>
@@ -76,7 +73,6 @@ export default function SearchBreedFilter({
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                     handleBreedSelect(currentValue);
-                    // console.log("command selected:", currentValue);
                   }}
                   className="hover:bg-gray-100"
                 >

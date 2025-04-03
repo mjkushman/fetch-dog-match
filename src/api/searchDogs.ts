@@ -26,11 +26,10 @@ const searchDogs = async (
         url.searchParams.set("sort", `${options.sortField}:${options.sortOrder}`);
       }
     }
-    url.searchParams.set("size", "36"); // force size
+    url.searchParams.set("size", "24"); // force size
     // handle sorting specifically
   }
 
-  console.log("debugging search url:", url.toString());
   const response = await fetch(url, {
     method: "GET",
     credentials: "include",

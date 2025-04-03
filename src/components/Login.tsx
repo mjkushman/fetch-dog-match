@@ -33,9 +33,9 @@ export default function Login({ doLogin }: LoginProps) {
           <div className="flex flex-col gap-6">
             <Card>
               <CardHeader>
-                <Wordmark className="mb-4" />
-                <CardTitle className="text-2xl text-center">
-                  Log in to proceed
+                <Wordmark />
+                <CardTitle className="text-xl text-center mt-4">
+                  You're so close to seeing dogs
                 </CardTitle>
               </CardHeader>
               <CardContent>

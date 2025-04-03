@@ -16,7 +16,7 @@ interface MatchPopoverProps {
 export default function MatchPopover({ favoriteDogs }: MatchPopoverProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { match, getMatch, clearMatch, isLoading } = useMatch();
+  const { match, getMatch, isLoading } = useMatch();
 
 
   useEffect(() => {
