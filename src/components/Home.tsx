@@ -6,15 +6,13 @@ import SortControls from "./SortControls";
 import PageControls from "./PageControls";
 import DogList from "./DogList";
 
-import Loading from "./Loading";
 import { useDogs } from "@/hooks/useDogs";
 import { Dog } from "@/types/Dog";
 
 import Favorites from "./Favorites";
-import MatchedDog from "@/components/MatchedDog";
-import fetchMatch from "@/api/fetchMatch";
+import MatchPopover from "@/components/MatchPopover";
+
 import Hero from "@/components/Hero";
-import { Button } from "./ui/button";
 
 export default function Home() {
   const maxFavorites = 7;
@@ -22,11 +20,10 @@ export default function Home() {
 
   const [selectedDogs, setSelectedDogs] = useState<Map<string, Dog>>(new Map()); // an array of "saved" dog Ids
 
-  const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
   const [options, setOptions] = useState<SearchDogsOptions>({
     sortField: "breed",
     sortOrder: "asc", // defaults to breed, asc
-  }); 
+  });
 
   useEffect(() => {
     getDogs("", options);
@@ -38,12 +35,9 @@ export default function Home() {
   const handleSortField = (field: SortField) => {
     setOptions((prev) => ({ ...prev, sortField: field }));
   };
- 
 
-  
   const handleBreedSelect = (breed: string) => {
     if (breed !== "") {
-      console.log("selected breed", breed);
       setOptions((prev) => ({ ...prev, breeds: [breed] }));
     }
   };
@@ -71,15 +65,14 @@ export default function Home() {
     });
   };
 
-  const getMatch = () => {
-    if (!selectedDogs.size) return; // do nothing
-    setMatchedDog(null);
-    fetchMatch([...selectedDogs.keys()]).then(({ match }) => {
-      const dog = selectedDogs.get(match) || null;
-      setMatchedDog(dog);
-    });
-  };
+  // const getMatch = () => {
+  //   if (!selectedDogs.size) setMatchedDog(null); // clears match
 
+  //   fetchMatch([...selectedDogs.keys()]).then(({ match }) => {
+  //     const dog = selectedDogs.get(match) || null;
+  //     setMatchedDog(dog);
+  //   });
+  // };
 
   return (
     <>
@@ -97,40 +90,28 @@ export default function Home() {
         </Hero>
       </div>
 
-      <div className="relative main w-full mx-auto flex flex-col items-center mt-32">
-        <div>
-          {/* FILTER CONTROLS for age min, age max, breeds, zip code */}
-        </div>
-
-        <div className="flex flex-row items-center-auto">
+      <div className="relative w-full flex flex-col items-center mt-32">
+        <div className="flex flex-row">
           {/*  Favotites and Match section */}
           <div className="sticky top-4 self-start p-4 w-full bg-white shadow-lg rounded-xl border my-2 max-w-xl">
-
             <Favorites
               favoriteDogs={[...selectedDogs.values()]}
               removeFromFavorites={removeFromFavorites}
             />
-            <Button
-              disabled={selectedDogs.size === 0}
-              onClick={getMatch}
-              className="w-full py-4 rounded-lg bg-primary mt-4"
-            >
-              <p>Get {matchedDog ? "New " : ""} Recommendation</p>
-            </Button>
-          </div>
-          <div className="flex flex-col m-2">
-            <MatchedDog matchedDog={matchedDog} />
-
+            <div hidden={selectedDogs.size == 0}>
+              <MatchPopover favoriteDogs={selectedDogs} />
+            </div>
           </div>
         </div>
 
         {/* Display dogs */}
-        <div className="block">
-          {isLoading ? (
-            <Loading />
-          ) : (
-            <DogList dogs={dogs} handleSelectId={handleSelectId} />
-          )}
+        <div>
+          <DogList
+            dogs={dogs}
+            handleSelectId={handleSelectId}
+            selectedDogs={selectedDogs}
+            isLoading={isLoading}
+          />
         </div>
         {/* Pagination controls */}
         <PageControls
