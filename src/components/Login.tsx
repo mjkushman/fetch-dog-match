@@ -1,18 +1,11 @@
+import Wordmark from "@/assets/wordmark.svg?react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import { useState } from "react";
 
 import { LoginFormData } from "@/types/LoginFormData";
-
 
 type LoginProps = {
   doLogin: (LoginFormData: LoginFormData) => void;
@@ -40,18 +33,16 @@ export default function Login({ doLogin }: LoginProps) {
           <div className="flex flex-col gap-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-2xl">Login</CardTitle>
-                <CardDescription>
-                  Enter your name and email to proceed
-                </CardDescription>
+                <Wordmark className="mb-4" />
+                <CardTitle className="text-2xl text-center">
+                  Log in to proceed
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} name="loginForm">
                   <div className="flex flex-col gap-6">
                     <div className="grid gap-2">
-                      <div className="flex items-center">
-                        <Label htmlFor="name">Name</Label>
-                      </div>
+                      <div className="flex items-center"></div>
                       <Input
                         name="name"
                         id="name"
@@ -64,12 +55,11 @@ export default function Login({ doLogin }: LoginProps) {
                       />
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="email">Email</Label>
                       <Input
                         name="email"
                         id="email"
                         type="email"
-                        placeholder="benjamin_franklin@example.com"
+                        placeholder="Email"
                         autoComplete="email"
                         value={formData.email}
                         onChange={handleChange}
