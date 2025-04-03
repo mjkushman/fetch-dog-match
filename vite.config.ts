@@ -12,5 +12,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base:"/fetch-fe/"
+  base:"/fetch-dog-match/"
 });
