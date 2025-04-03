@@ -65,23 +65,13 @@ export default function Home() {
     });
   };
 
-  // const getMatch = () => {
-  //   if (!selectedDogs.size) setMatchedDog(null); // clears match
-
-  //   fetchMatch([...selectedDogs.keys()]).then(({ match }) => {
-  //     const dog = selectedDogs.get(match) || null;
-  //     setMatchedDog(dog);
-  //   });
-  // };
-
   return (
     <>
       <div className="fixed top-0 w-full z-10">
         <Hero>
           <div className="flex mx-auto h-16 bg-white items-center rounded-l-full  rounded-r-full shadow-2xl border-stone-200 border-1">
-            {/* Breed Filter control */}
+            {/* Breed and Sort controls */}
             <SearchBreedFilter handleBreedSelect={handleBreedSelect} />
-            {/* SORT CONTROLS for sorting dogs  */}
             <SortControls
               handleSortOrder={handleSortOrder}
               handleSortField={handleSortField}

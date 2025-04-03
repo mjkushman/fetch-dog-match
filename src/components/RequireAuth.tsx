@@ -2,13 +2,12 @@ import { ReactNode, useEffect, useState } from "react";
 import Login from "@/components/Login";
 import authenticate from "@/api/authenticate";
 import { LoginFormData } from "@/types/LoginFormData";
+import Loading from "@/components/Loading";
 
-export default function RequireAuth({children}:{children:ReactNode}) {
+export default function RequireAuth({ children }: { children: ReactNode }) {
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-
 
   const doLogin = async (loginFormData: LoginFormData) => {
     setIsLoading(true);
@@ -22,8 +21,6 @@ export default function RequireAuth({children}:{children:ReactNode}) {
     }
   };
 
-
-
   useEffect(() => {
     const url = new URL("/dogs/breeds/", BASE_URL);
     fetch(url, { credentials: "include" })
@@ -34,9 +31,9 @@ export default function RequireAuth({children}:{children:ReactNode}) {
       .then((res) => setIsAuthenticated(res))
       .catch(() => setIsAuthenticated(false))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [BASE_URL]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading/>;
 
   if (!isAuthenticated && !isLoading) return <Login doLogin={doLogin} />;
   return <div>{children}</div>;
